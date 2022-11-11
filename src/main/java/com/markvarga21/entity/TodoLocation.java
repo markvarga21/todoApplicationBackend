@@ -1,6 +1,9 @@
 package com.markvarga21.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +12,8 @@ import javax.persistence.Id;
 
 @Entity
 @Data
+@ToString
+@NoArgsConstructor
 public class TodoLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -16,5 +21,5 @@ public class TodoLocation {
     private String country;
     private String city;
     private String street;
-    private Long number;
+    private String number;
 }
