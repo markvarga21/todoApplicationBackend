@@ -26,6 +26,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public AppUser saveUser(AppUser user) {
+        log.info("Saving user {}", user);
         String userName = user.getUserName();
         if (userNameAlreadyExists(userName)) {
             throw new InvalidUserCredentials(String.format("Username '%s' is already in use!", userName));
@@ -47,15 +48,17 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public Role saveRole(Role role) {
+        log.info("Saving role {}", role);
         String roleName = role.getName();
         if (roleNameAlreadyExists(roleName)) {
-            throw new InvalidRoleException(String.format("Role'%s' already exists!", roleName))
+            throw new InvalidRoleException(String.format("Role'%s' already exists!", roleName));
         }
         return this.roleRepository.save(role);
     }
 
     @Override
     public void addRoleToAppUser(String userName, String roleName) {
+        log.info("Adding role {} to user {}", roleName, userName);
         var userOptional  = this.userRepository.findByUserName(userName);
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException(String.format("User not found with name: %s", userName));
@@ -72,6 +75,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public AppUser getUser(String userName) {
+        log.info("Getting user {}", userName);
         var userOptional = this.userRepository.findByUserName(userName);
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException(String.format("User not found with username '%s'", userName));
@@ -81,6 +85,7 @@ public class AppUserServiceImpl implements AppUserService {
 
     @Override
     public List<AppUser> getUsers() {
+        log.info("Getting all users");
         var users = this.userRepository.findAll();
         if (users.isEmpty()) {
             return List.of();

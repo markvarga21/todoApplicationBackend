@@ -11,26 +11,29 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/todo")
 public class TodoItemController {
     private final TodoItemService todoItemService;
 
     @GetMapping("/getTodoItems")
-    public List<TodoItemDto> getTodoItems() {
-        return this.todoItemService.getAllTodoItems();
+    public ResponseEntity<List<TodoItemDto>> getTodoItems() {
+        return new ResponseEntity<>(
+                this.todoItemService.getAllTodoItems(),
+                HttpStatus.OK
+        );
     }
 
-    @PostMapping("/saveTodoItem")
+    @PostMapping("/save")
     public ResponseEntity<String> saveTodoItem(@RequestBody TodoItemDto todoItemDto) {
         return new ResponseEntity<>(this.todoItemService.saveTodoItem(todoItemDto), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/deleteTodoItem")
+    @DeleteMapping("/delete")
     public ResponseEntity<String> deleteTodoItem(@RequestParam Long id) {
         return new ResponseEntity<>(this.todoItemService.deleteTodoItemById(id), HttpStatus.GONE);
     }
 
-    @PutMapping("updateTodoItem")
+    @PutMapping("/update")
     public ResponseEntity<String> modifyTodoItem(@RequestBody TodoItemDto todoItemDto, @RequestParam Long id) {
         return new ResponseEntity<>(this.todoItemService.modifyTodoItemById(todoItemDto, id), HttpStatus.OK);
     }
