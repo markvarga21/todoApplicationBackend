@@ -27,6 +27,6 @@ public class TodoItemController {
 
     @DeleteMapping("/deleteTodoItem")
     public ResponseEntity<String> deleteTodoItem(@RequestParam Long id) {
-
+        return new ResponseEntity<>(this.todoItemService.deleteTodoItemById(id), HttpStatus.GONE);
     }
 }

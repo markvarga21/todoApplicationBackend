@@ -47,6 +47,11 @@ public class TodoItemServiceImpl implements TodoItemService {
 
     @Override
     public String deleteTodoItemById(Long id) {
-        return "";
+        var todoItemOptional = this.todoItemRepository.findById(id);
+        if (todoItemOptional.isEmpty()) {
+            return String.format("Todo item not found with id '%d'!", id);
+        }
+        this.todoItemRepository.deleteById(todoItemOptional.get().getId());
+        return String.format("Todo item with id '%d' deleted successfully!", id);
     }
 }
