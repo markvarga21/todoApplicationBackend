@@ -29,4 +29,9 @@ public class TodoItemController {
     public ResponseEntity<String> deleteTodoItem(@RequestParam Long id) {
         return new ResponseEntity<>(this.todoItemService.deleteTodoItemById(id), HttpStatus.GONE);
     }
+
+    @PutMapping("updateTodoItem")
+    public ResponseEntity<String> modifyTodoItem(@RequestBody TodoItemDto todoItemDto, @RequestParam Long id) {
+        return new ResponseEntity<>(this.todoItemService.modifyTodoItemById(todoItemDto, id), HttpStatus.OK);
+    }
 }

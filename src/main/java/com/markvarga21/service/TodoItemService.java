@@ -12,4 +12,5 @@ public interface TodoItemService {
     List<TodoItemDto> getAllTodoItems();
     boolean todoItemAlreadyExistsWithName(String name);
     String deleteTodoItemById(Long id);
+    String modifyTodoItemById(TodoItemDto todoItemDto, Long id);
 }

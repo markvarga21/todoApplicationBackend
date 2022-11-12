@@ -54,4 +54,19 @@ public class TodoItemServiceImpl implements TodoItemService {
         this.todoItemRepository.deleteById(todoItemOptional.get().getId());
         return String.format("Todo item with id '%d' deleted successfully!", id);
     }
+
+    @Override
+    public String modifyTodoItemById(TodoItemDto newTodoItem, Long id) {
+        var todoItemEntityOptional = this.todoItemRepository.findById(id);
+        if (todoItemEntityOptional.isEmpty()) {
+            return String.format("Todo item not found with id '%d'!", id);
+        }
+        var todoItemToUpdate = todoItemEntityOptional.get();
+        var newTodoItemEntity = this.todoItemMapper.mapTodoItemDtoToEntity(newTodoItem);
+        todoItemToUpdate.setLocation(newTodoItemEntity.getLocation());
+        todoItemToUpdate.setTitle(newTodoItem.getTitle());
+        todoItemToUpdate.setDescription(newTodoItem.getDescription());
+        this.todoItemRepository.save(todoItemToUpdate);
+        return String.format("Todo item with id '%d' modified successfully!", id);
+    }
 }
