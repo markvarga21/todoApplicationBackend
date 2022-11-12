@@ -11,18 +11,46 @@ import com.markvarga21.repository.RoleRepository;
 import com.markvarga21.service.AppUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class AppUserServiceImpl implements AppUserService {
+public class AppUserServiceImpl implements AppUserService, UserDetailsService {
     private final AppUserRepository userRepository;
     private final RoleRepository roleRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        var userOptional = this.userRepository.findByUserName(username);
+        if (userOptional.isEmpty()) {
+            log.error("User not found with username '{}'", username);
+            throw new UserNotFoundException(String.format("Username '%s' not found!", username));
+        }
+        log.info("User '{}' found!", username);
+        var user = userOptional.get();
+        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+        user.getRoles()
+            .forEach(role ->
+                    authorities.add(new SimpleGrantedAuthority(role.getName()))
+            );
+        return new User(
+                user.getUserName(),
+                user.getPassword(),
+                authorities
+        );
+    }
 
     @Override
     public AppUser saveUser(AppUser user) {
