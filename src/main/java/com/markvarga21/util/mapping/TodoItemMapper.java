@@ -2,13 +2,10 @@ package com.markvarga21.util.mapping;
 
 import com.markvarga21.dto.TodoItemDto;
 import com.markvarga21.entity.TodoItem;
-import com.markvarga21.util.converting.LocalDateTimeConverter;
+import com.markvarga21.util.converter.LocalDateTimeConverter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeMap;
 import org.springframework.stereotype.Component;
-
-import javax.print.attribute.standard.Destination;
 
 @Component
 @RequiredArgsConstructor
@@ -18,15 +15,22 @@ public class TodoItemMapper {
     private final LocalDateTimeConverter converter;
 
     public TodoItem mapTodoItemDtoToEntity(TodoItemDto todoItemDto) {
-        TodoItem item = new TodoItem(
-                todoItemDto.getTitle(),
-                todoItemDto.getDescription(),
-                this.converter.convertDateStringToLocalDateTime(todoItemDto.getDate()),
-                this.todoLocationMapper.mapTodoLocationDtoToEntity(todoItemDto.getLocation())
-        );
+        TodoItem todoItem = new TodoItem();
+        todoItem.setTitle(todoItemDto.getTitle());
+        todoItem.setDescription(todoItemDto.getDescription());
+        todoItem.setLocation(this.todoLocationMapper.mapTodoLocationDtoToEntity(todoItemDto.getLocation()));
+        todoItem.setDate(this.converter.convertDateStringToLocalDateTime(todoItemDto.getDate()));
+        todoItem.setId(todoItemDto.getId());
+        return todoItem;
     }
 
     public TodoItemDto mapTodoItemEntityToDto(TodoItem todoItem) {
-        return this.modelMapper.map(todoItem, TodoItemDto.class);
+        TodoItemDto todoItemDto = new TodoItemDto();
+        todoItemDto.setTitle(todoItem.getTitle());
+        todoItemDto.setDescription(todoItem.getDescription());
+        todoItemDto.setLocation(this.todoLocationMapper.mapTodoLocationEntityToDto(todoItem.getLocation()));
+        todoItemDto.setDate(this.converter.convertDateToString(todoItem.getDate()));
+        todoItemDto.setId(todoItem.getId());
+        return todoItemDto;
     }
 }

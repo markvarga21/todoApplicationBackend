@@ -21,13 +21,11 @@ public class TodoItemServiceImpl implements TodoItemService {
     @Override
     public String saveTodoItem(TodoItemDto todoItemDto) {
         TodoItem todoItemToSave = this.todoItemMapper.mapTodoItemDtoToEntity(todoItemDto);
-        log.info("Todo item dto: {}", todoItemDto);
-        log.info("Todo item entity: {}", todoItemToSave);
         if (this.todoItemAlreadyExistsWithName(todoItemDto.getTitle())) {
             return String.format("Todo item with name '%s' already exists!", todoItemDto.getTitle());
         }
         this.todoItemRepository.save(todoItemToSave);
-        return String.format("%s saved successfully!", todoItemToSave);
+        return String.format("%s saved successfully!", todoItemDto);
     }
 
     @Override
@@ -45,5 +43,10 @@ public class TodoItemServiceImpl implements TodoItemService {
                 .stream()
                 .map(this.todoItemMapper::mapTodoItemEntityToDto)
                 .toList();
+    }
+
+    @Override
+    public String deleteTodoItemById(Long id) {
+        return "";
     }
 }

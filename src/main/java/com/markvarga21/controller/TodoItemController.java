@@ -24,4 +24,9 @@ public class TodoItemController {
     public ResponseEntity<String> saveTodoItem(@RequestBody TodoItemDto todoItemDto) {
         return new ResponseEntity<>(this.todoItemService.saveTodoItem(todoItemDto), HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/deleteTodoItem")
+    public ResponseEntity<String> deleteTodoItem(@RequestParam Long id) {
+
+    }
 }

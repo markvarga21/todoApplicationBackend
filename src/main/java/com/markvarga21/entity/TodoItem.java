@@ -20,6 +20,7 @@ public class TodoItem {
     private String title;
     private String description;
     private LocalDateTime date;
-    @ManyToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
     private TodoLocation location;
 }

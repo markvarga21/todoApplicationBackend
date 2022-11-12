@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -17,6 +14,7 @@ import javax.persistence.Id;
 public class TodoLocation {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
     private String country;
     private String city;
