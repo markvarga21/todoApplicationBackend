@@ -1,64 +1,64 @@
 package com.markvarga21.security;
 
+import com.markvarga21.exception.UserNotFoundException;
+import com.markvarga21.service.AppUserService;
+import com.markvarga21.service.impl.AppUserServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+
+import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.Collection;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity
+@Slf4j
 public class SecurityConfiguration {
-    private final CustomAuthenticationFilter authenticationFilter;
+    private final AppUserServiceImpl appUserService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.addFilter(this.authenticationFilter)
-            .csrf()
-            .disable()
-            .authorizeRequests()
-            .antMatchers(HttpMethod.DELETE)
-            .hasRole("ROLE_ADMIN")
-            .antMatchers("/api/user/**")
-            .hasAnyRole("ROLE_USER", "ROLE_MANAGER", "ROLE_ADMIN", "ROLE_SUPER_ADMIN")
-            .antMatchers("/login/**")
-            .anonymous()
-            .anyRequest()
-            .authenticated()
-            .and()
-            .httpBasic()
-            .and()
-            .sessionManagement()
-            .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+        http
+            .csrf(csrf -> csrf.ignoringAntMatchers("/h2-console/**"))
+            .authorizeRequests(auth -> auth
+                        .antMatchers("/h2-console/**").permitAll()
+                        .anyRequest().authenticated()
+            )
+                .userDetailsService(this.appUserService)
+            .headers(headers -> headers.frameOptions().sameOrigin())
+            .httpBasic(Customizer.withDefaults());
         return http.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web
-                .ignoring()
-                .antMatchers("/h2-console/**/**");
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
     }
 }

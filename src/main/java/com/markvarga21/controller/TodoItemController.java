@@ -5,6 +5,7 @@ import com.markvarga21.service.TodoItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 public class TodoItemController {
     private final TodoItemService todoItemService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/getTodoItems")
     public ResponseEntity<List<TodoItemDto>> getTodoItems() {
         return new ResponseEntity<>(
@@ -23,16 +25,19 @@ public class TodoItemController {
         );
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/save")
     public ResponseEntity<String> saveTodoItem(@RequestBody TodoItemDto todoItemDto) {
         return new ResponseEntity<>(this.todoItemService.saveTodoItem(todoItemDto), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteTodoItem(@RequestParam Long id) {
         return new ResponseEntity<>(this.todoItemService.deleteTodoItemById(id), HttpStatus.GONE);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/update")
     public ResponseEntity<String> modifyTodoItem(@RequestBody TodoItemDto todoItemDto, @RequestParam Long id) {
         return new ResponseEntity<>(this.todoItemService.modifyTodoItemById(todoItemDto, id), HttpStatus.OK);

@@ -8,6 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 
@@ -19,17 +20,19 @@ public class TodoAppApplication {
 	}
 
 	@Bean
-	CommandLineRunner run(@Qualifier("appUserServiceImpl") AppUserService userService) {
+	CommandLineRunner run(@Qualifier("appUserServiceImpl") AppUserService userService, PasswordEncoder encoder) {
 		return args -> {
 			userService.saveRole(new Role(null, "ROLE_USER"));
 			userService.saveRole(new Role(null, "ROLE_MANAGER"));
 			userService.saveRole(new Role(null, "ROLE_ADMIN"));
 			userService.saveRole(new Role(null, "ROLE_SUPER_ADMIN"));
 
-			userService.saveUser(new AppUser(null, "John Cena", "john", "1234", new ArrayList<>()));
-			userService.saveUser(new AppUser(null, "Milly Alcock", "milly", "1234", new ArrayList<>()));
-			userService.saveUser(new AppUser(null, "Johnny Depp", "jdepp", "1234", new ArrayList<>()));
-			userService.saveUser(new AppUser(null, "Stevan Segal", "steve", "steve123", new ArrayList<>()));
+			userService.saveUser(new AppUser(null, "John Cena", "john", encoder.encode("1234"), new ArrayList<>()));
+			userService.saveUser(new AppUser(null, "Milly Alcock", "milly", encoder.encode("1234"), new ArrayList<>()));
+			userService.saveUser(new AppUser(null, "Johnny Depp", "jdepp", encoder.encode("1234"), new ArrayList<>()));
+			userService.saveUser(new AppUser(null, "Stevan Segal", "steve", encoder.encode("steve123"), new ArrayList<>()));
+			userService.saveUser(new AppUser(null, "Admin", "admin", encoder.encode("admin"), new ArrayList<>()));
+
 
 			userService.addRoleToAppUser("john", "ROLE_USER");
 			userService.addRoleToAppUser("john", "ROLE_MANAGER");
@@ -38,6 +41,8 @@ public class TodoAppApplication {
 			userService.addRoleToAppUser("steve", "ROLE_SUPER_ADMIN");
 			userService.addRoleToAppUser("steve", "ROLE_ADMIN");
 			userService.addRoleToAppUser("steve", "ROLE_USER");
+			userService.addRoleToAppUser("admin", "ROLE_ADMIN");
+			userService.addRoleToAppUser("admin", "ROLE_USER");
 
 		};
 	}
