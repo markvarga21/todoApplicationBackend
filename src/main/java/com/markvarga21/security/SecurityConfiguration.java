@@ -20,6 +20,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -51,9 +52,14 @@ public class SecurityConfiguration {
                         .antMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
             )
-                .userDetailsService(this.appUserService)
-            .headers(headers -> headers.frameOptions().sameOrigin())
+            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+            .userDetailsService(this.appUserService)
+            .headers(headers -> headers
+                        .frameOptions()
+                        .sameOrigin()
+            )
             .httpBasic(Customizer.withDefaults());
+
         return http.build();
     }
 

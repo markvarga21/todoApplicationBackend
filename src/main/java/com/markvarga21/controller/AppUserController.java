@@ -14,9 +14,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
 public class AppUserController {
     private final AppUserService userService;
+
+    @GetMapping("/login")
+    public String login() {
+        return "login";
+    }
 
     @GetMapping("/users")
     public ResponseEntity<List<AppUser>> getUsers() {
