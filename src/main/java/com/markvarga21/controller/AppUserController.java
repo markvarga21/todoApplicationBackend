@@ -17,11 +17,6 @@ import java.util.List;
 public class AppUserController {
     private final AppUserService userService;
 
-    @GetMapping("/login")
-    public String login() {
-        return "login";
-    }
-
     @GetMapping("/users")
     public ResponseEntity<List<AppUser>> getUsers() {
         return new ResponseEntity<>(
