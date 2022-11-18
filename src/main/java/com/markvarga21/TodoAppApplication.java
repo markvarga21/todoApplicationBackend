@@ -25,12 +25,13 @@ public class TodoAppApplication {
 	@Bean
 	CommandLineRunner run(@Qualifier("appUserServiceImpl") AppUserService userService, PasswordEncoder encoder) {
 		return args -> {
-			userService.saveRole(new Role(null, "superadmin"));
+			userService.saveRole(new Role(null, "admin"));
 			userService.saveRole(new Role(null, "user"));
 
 			userService.saveUser(new AppUser(null, "Admin", "admin", "{noop}admin", new ArrayList<>()));
 
-			userService.addRoleToAppUser("admin", "superadmin");
+			userService.addRoleToAppUser("admin", "admin");
+			userService.addRoleToAppUser("admin", "user");
 
 		};
 	}

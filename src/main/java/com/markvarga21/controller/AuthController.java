@@ -4,13 +4,20 @@ import com.markvarga21.dto.LoginRequest;
 import com.markvarga21.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @Slf4j
@@ -19,19 +26,29 @@ public class AuthController {
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
 
-    @GetMapping("/token")
+    @GetMapping("/login")
     public String token(@RequestBody LoginRequest userLogin) {
-        log.info("Inside /token post endpoint");
         Authentication authentication = this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userLogin.userName(),
-                        userLogin.password())
+                        userLogin.password()
+                )
         );
         return this.tokenService.generateToken(authentication);
     }
 
+    @PreAuthorize("hasAuthority('SCOPE_admin')")
     @GetMapping("/hello")
     public String hello() {
-        return "HI";
+        return "Admin role checked!";
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<String> logoutUser(HttpServletRequest request, HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            new SecurityContextLogoutHandler().logout(request, response, authentication);
+        }
+        return new ResponseEntity<>("Authentication is null!", HttpStatus.NOT_FOUND);
     }
 }
