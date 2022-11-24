@@ -49,11 +49,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors().and()
+            .cors().and()
             .authorizeRequests(auth -> auth
                         .antMatchers("/h2-console/**").permitAll()
                         .mvcMatchers("/login").permitAll()
                         .antMatchers("/api/user/register").permitAll()
+                        .antMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
             )
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
