@@ -12,9 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,11 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
+@CrossOrigin
 public class AuthController {
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public String token(@RequestBody LoginRequest userLogin) {
         Authentication authentication = this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
