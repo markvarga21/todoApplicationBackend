@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,10 +53,22 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         );
     }
 
+    @PostConstruct
+    private void initRoles() {
+        this.saveRole(new Role(null, "admin"));
+        this.saveRole(new Role(null, "user"));
+
+        this.saveUser(new AppUser(null, "Admin", "admin", "{noop}admin", new ArrayList<>()));
+
+        this.addRoleToAppUser("admin", "admin");
+        this.addRoleToAppUser("admin", "user");
+    }
+
     @Override
     public AppUser saveUser(AppUser user) {
         log.info("Saving user {}", user);
         String userName = user.getUserName();
+//        this.addRoleToAppUser(userName, "user");
         if (userNameAlreadyExists(userName)) {
             throw new InvalidUserCredentials(String.format("Username '%s' is already in use!", userName));
         }

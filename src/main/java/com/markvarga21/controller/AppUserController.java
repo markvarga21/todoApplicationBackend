@@ -28,7 +28,7 @@ public class AppUserController {
         );
     }
 
-    @GetMapping("/register")
+    @PostMapping("/register")
     public ResponseEntity<AppUser> saveUser(@RequestBody AppUser user) {
         return new ResponseEntity<>(
                 this.userService.saveUser(user),
