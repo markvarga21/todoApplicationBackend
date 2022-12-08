@@ -12,5 +12,6 @@ public class TodoItemDto {
     private String title;
     private String description;
     private String date;
-    private TodoLocationDto location;
+    private String location;
+//    private TodoLocationDto location;
 }
