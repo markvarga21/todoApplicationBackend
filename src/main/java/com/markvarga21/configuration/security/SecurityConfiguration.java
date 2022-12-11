@@ -46,7 +46,6 @@ public class SecurityConfiguration {
                         .antMatchers("/h2-console/**").permitAll()
                         .mvcMatchers("/login").permitAll()
                         .antMatchers("/api/user/register").permitAll()
-//                        .antMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
             ).exceptionHandling().authenticationEntryPoint(entryPoint).and()
             .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)

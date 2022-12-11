@@ -53,26 +53,18 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
         );
     }
 
-    @PostConstruct
-    private void initRoles() {
-        this.saveRole(new Role(null, "admin"));
-        this.saveRole(new Role(null, "user"));
-
-        this.saveUser(new AppUser(null, "Admin", "admin", "{noop}admin", new ArrayList<>()));
-
-        this.addRoleToAppUser("admin", "admin");
-        this.addRoleToAppUser("admin", "user");
-    }
-
     @Override
     public AppUser saveUser(AppUser user) {
         log.info("Saving user {}", user);
         String userName = user.getUserName();
-//        this.addRoleToAppUser(userName, "user");
+        String oldPassword = user.getPassword();
+        user.setPassword("{noop}" + oldPassword);
         if (userNameAlreadyExists(userName)) {
             throw new InvalidUserCredentials(String.format("Username '%s' is already in use!", userName));
         }
-        return this.userRepository.save(user);
+        this.userRepository.save(user);
+        this.addRoleToAppUser(userName, "user");
+        return user;
     }
 
     private boolean userNameAlreadyExists(String userName) {
@@ -112,6 +104,7 @@ public class AppUserServiceImpl implements AppUserService, UserDetailsService {
                 .get()
                 .getRoles()
                 .add(roleOptional.get());
+        log.info(userOptional.get().getRoles().toString());
     }
 
     @Override

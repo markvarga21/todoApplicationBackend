@@ -19,7 +19,7 @@ import java.util.List;
 public class TodoItemController {
     private final TodoItemService todoItemService;
 
-//    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @PreAuthorize("hasAuthority('SCOPE_user')")
     @GetMapping("/todoItems")
     public ResponseEntity<List<TodoItemDto>> getTodoItems() {
         return new ResponseEntity<>(
@@ -28,20 +28,20 @@ public class TodoItemController {
         );
     }
 
-//    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @PreAuthorize("hasAuthority('SCOPE_user')")
     @PostMapping("/save")
     public ResponseEntity<String> saveTodoItem(@RequestBody TodoItemDto todoItemDto) {
         log.info("Todo to save: {}", todoItemDto);
         return new ResponseEntity<>(this.todoItemService.saveTodoItem(todoItemDto), HttpStatus.CREATED);
     }
 
-//    @PreAuthorize("hasAuthority('SCOPE_admin')")
+    @PreAuthorize("hasAuthority('SCOPE_admin')")
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteTodoItem(@RequestParam Long id) {
         return new ResponseEntity<>(this.todoItemService.deleteTodoItemById(id), HttpStatus.GONE);
     }
 
-//    @PreAuthorize("hasAuthority('SCOPE_user')")
+    @PreAuthorize("hasAuthority('SCOPE_user')")
     @PutMapping("/update")
     public ResponseEntity<String> modifyTodoItem(@RequestBody TodoItemDto todoItemDto, @RequestParam Long id) {
         return new ResponseEntity<>(this.todoItemService.modifyTodoItemById(todoItemDto, id), HttpStatus.OK);
